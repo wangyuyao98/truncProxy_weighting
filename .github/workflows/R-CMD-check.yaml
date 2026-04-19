@@ -38,3 +38,9 @@ jobs:
         with:
           working-directory: pkg/truncProxy
           upload-snapshots: false
+
+      - name: Show install log on failure
+        if: failure()
+        shell: bash
+        run: |
+          find pkg/truncProxy/check -name '00install.out' -exec cat '{}' \;

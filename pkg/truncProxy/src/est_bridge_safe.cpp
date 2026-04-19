@@ -1,4 +1,7 @@
 #include <RcppArmadillo.h>
+#include <algorithm>
+#include <cmath>
+#include <exception>
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
