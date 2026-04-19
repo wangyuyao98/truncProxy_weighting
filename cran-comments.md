@@ -1,25 +1,26 @@
 ## Test environments
 
 - Local macOS (Apple Silicon), R 4.5.1
-- GitHub Actions workflow configured for:
+- GitHub Actions:
   - ubuntu-latest, R-release
   - windows-latest, R-release
   - macos-latest, R-release
 
 ## R CMD check results
 
-- `R CMD check --as-cran --no-manual truncProxy_0.1.0.tar.gz`
+- `R CMD check --as-cran truncProxy_0.1.0.tar.gz`
 
-Local checks completed without package errors or warnings.
+Local `R CMD check --as-cran` completed with 3 NOTEs and no errors or warnings.
 
-The local `--as-cran` run produced environment-specific NOTEs related to:
+The NOTEs were:
 
-- unavailable Internet access for CRAN incoming and URL checks
-- unavailable `pandoc` for top-level file checks
-- inability to verify current time
-- temporary directory detritus (`xcrun_db`) on the local system
+- This is a new submission.
+- `README.md` and `NEWS.md` could not be checked locally because `pandoc` is not installed.
+- HTML validation could not be fully checked locally because `HTML Tidy` is not recent enough.
 
-These did not indicate package code or documentation problems.
+These are local environment issues and not package issues.
+
+GitHub Actions checks passed on Linux, macOS, and Windows.
 
 ## Downstream dependencies
 
