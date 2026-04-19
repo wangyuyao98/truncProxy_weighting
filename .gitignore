@@ -47,3 +47,9 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Local package development artifacts
+.Rlib/
+pkg/truncProxy/src/*.o
+pkg/truncProxy/src/*.so
+pkg/truncProxy/src/*.dll
