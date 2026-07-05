@@ -1,7 +1,19 @@
 
-# The PQB estimator for marginal survival probability 
+# Warn if any pseudo-inverse steps failed inside the C++ bridge estimation
+check_qbridge_fit <- function(qfit) {
+  if (!is.null(qfit$n_pinv_fail) && qfit$n_pinv_fail > 0) {
+    warning(sprintf(
+      "Bridge estimation: pseudo-inverse failed at %d of %d time points; the corresponding increments were skipped.",
+      qfit$n_pinv_fail, length(qfit$qtime)
+    ))
+  }
+  invisible(qfit)
+}
+
+
+# The PQB estimator for marginal survival probability
 # nu the transformation
-PQB_estimator <- function(nu, dat, time.name, Q.name, W1.name, W2.name, Z.name, 
+PQB_estimator <- function(nu, dat, time.name, Q.name, W1.name, W2.name, Z.name,
                           weights = rep(1, nrow(dat)),
                           trim.min = 1e-7, trim.max = 1e7) {
   
@@ -19,20 +31,21 @@ PQB_estimator <- function(nu, dat, time.name, Q.name, W1.name, W2.name, Z.name,
   
   # estimate the bridge process b
   qfit = qbridge(TT = TT, Q = Q, qtime = qtime, Z = q_Z, W = q_W, weights = weights)
+  check_qbridge_fit(qfit)
   B_int = qfit$B_int
   qtime = qfit$qtime
   # B = qfit$B
   # dB = qfit$dB
   # plot(qtime2, dB[,3])
-  
+
   # colnames(B_int) <- qfit$qtime
-  
+
   bT_hat = exp(B_int_eval(TT, B_int, qtime))    ## ?? Some of the weights are less than 1. Is this an issue? -- maybe not
   bT_hat = pmin(pmax(bT_hat, trim.min), trim.max)  # bound the estimated weights to improve stability
-  
+
   numer = mean(weights * bT_hat * nu(TT))
   denom = mean(weights * bT_hat)
-  
+
   return(numer/denom)
 }
 
@@ -92,11 +105,15 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
       delta_t_mx[,j] = as.numeric(dat[,event.name] == 1 | X > temp_time)
       IPCW_weights_mx[,j] = delta_t_mx[,j]/pmax(stepfunD(pmin(X,temp_time)-Q), trim.IPCW)
     }
-    
-    
+    if(anyNA(IPCW_weights_mx)){
+      stop("Time-varying IPCW weights contain NA values; check the censoring KM fit.")
+    }
+
+
     # estimate the bridge process b
-    qfit = qbridge_IPCW(TT = X, Q = Q, qtime = qtime, Z = q_Z, W = q_W, 
+    qfit = qbridge_IPCW(TT = X, Q = Q, qtime = qtime, Z = q_Z, W = q_W,
                    IPCW_weights = IPCW_weights_mx, weights = weights)
+    check_qbridge_fit(qfit)
     B_int = qfit$B_int
     qtime = qfit$qtime
     # B = qfit$B
@@ -125,6 +142,9 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
     tau_delta = max(Q_max, t0)
     delta_t = as.numeric(dat[,event.name] == 1 | X > tau_delta)
     IPCW_weights = delta_t/pmax(stepfunD(pmin(X, tau_delta) - Q), trim.IPCW)
+    if(anyNA(IPCW_weights)){
+      stop("IPCW weights contain NA values; check the censoring KM fit.")
+    }
     numer = mean(weights * IPCW_weights * bT_hat * nu(X))
     denom = mean(weights * IPCW_weights * bT_hat)
     
@@ -140,8 +160,11 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
     tau_delta = max(Q_max, t0)
     delta_t = as.numeric(dat[,event.name] == 1 | X > tau_delta)
     IPCW_weights = delta_t/pmax(stepfunD(pmin(X, tau_delta) - Q), trim.IPCW)
-    
-    est = PQB_estimator(nu = nu, dat = dat, 
+    if(anyNA(IPCW_weights)){
+      stop("IPCW weights contain NA values; check the censoring KM fit.")
+    }
+
+    est = PQB_estimator(nu = nu, dat = dat,
                         time.name = time.name, Q.name = Q.name, 
                         W1.name = W1.name, W2.name = W2.name, Z.name = Z.name, 
                         weights = weights * IPCW_weights,
@@ -173,6 +196,7 @@ IPQW_estimator_aalen <- function(nu, dat, time.name, Q.name, Z.name,
   
   # estimate the bridge process b
   qfit = qbridge(TT = TT, Q = Q, qtime = qtime, Z = q_Z, W = q_Z, weights = weights)
+  check_qbridge_fit(qfit)
   B_int = qfit$B_int
   qtime = qfit$qtime
   # B = qfit$B
@@ -229,10 +253,14 @@ IPQW_IPCW_estimator_aalen <- function(nu, t0 = NULL, dat, time.name, Q.name, eve
       delta_t_mx[,j] = as.numeric(dat[,event.name] == 1 | TT > temp_time)
       IPCW_weights_mx[,j] = delta_t_mx[,j]/pmax(stepfunD(pmin(TT,temp_time)-Q), trim.IPCW)
     }
-    
+    if(anyNA(IPCW_weights_mx)){
+      stop("Time-varying IPCW weights contain NA values; check the censoring KM fit.")
+    }
+
     # estimate the bridge process b
-    qfit = qbridge_IPCW(TT = TT, Q = Q, qtime = qtime, Z = q_Z, W = q_Z, 
+    qfit = qbridge_IPCW(TT = TT, Q = Q, qtime = qtime, Z = q_Z, W = q_Z,
                         IPCW_weights = IPCW_weights_mx, weights = weights)
+    check_qbridge_fit(qfit)
     B_int = qfit$B_int
     qtime = qfit$qtime
     # B = qfit$B
@@ -261,7 +289,10 @@ IPQW_IPCW_estimator_aalen <- function(nu, t0 = NULL, dat, time.name, Q.name, eve
     tau_delta = max(Q_max, t0)
     delta_t = as.numeric(dat[,event.name] == 1 | TT > tau_delta)
     IPCW_weights = delta_t/pmax(stepfunD(pmin(TT, tau_delta) - Q), trim.IPCW)
-    
+    if(anyNA(IPCW_weights)){
+      stop("IPCW weights contain NA values; check the censoring KM fit.")
+    }
+
     numer = mean(weights * IPCW_weights * bT_hat * nu(TT))
     denom = mean(weights * IPCW_weights * bT_hat)
 
@@ -277,8 +308,11 @@ IPQW_IPCW_estimator_aalen <- function(nu, t0 = NULL, dat, time.name, Q.name, eve
     tau_delta = max(Q_max, t0)
     delta_t = as.numeric(dat[,event.name] == 1 | X > tau_delta)
     IPCW_weights = delta_t/pmax(stepfunD(pmin(X, tau_delta) - Q), trim.IPCW)
-    
-    est = IPQW_estimator_aalen(nu = nu, dat = dat, 
+    if(anyNA(IPCW_weights)){
+      stop("IPCW weights contain NA values; check the censoring KM fit.")
+    }
+
+    est = IPQW_estimator_aalen(nu = nu, dat = dat,
                                time.name = time.name, Q.name = Q.name, Z.name = Z.name, 
                                weights = weights * IPCW_weights,
                                trim.min = trim.min, trim.max = trim.max)
@@ -330,11 +364,11 @@ IPQW_estimator <- function(nu, dat, time.name, Q.name, cov.names,
 
 
 
-IPQW_oracle_estimator <- function(nu, dat, time.name, trim = 1e-7, 
+IPQW_oracle_estimator <- function(nu, dat, time.name, para_set, trim = 1e-7,
                                   weights = rep(1, nrow(dat))) {
-  
-  
-  GTZ = G_truth(dat$Z, dat$U, dat[, time.name])
+
+
+  GTZ = G_truth(dat$Z, dat$U, dat[, time.name], para_set)
   
   IPQW_weights = 1/pmax(GTZ, trim)
   

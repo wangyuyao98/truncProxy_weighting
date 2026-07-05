@@ -7,7 +7,7 @@ library(survival)
 source("src/data_generating.R")
 source("src/truncProxy.R")
 
-Rcpp::sourceCpp("src/est_bridge_safe.cpp")
+Rcpp::sourceCpp("pkg/truncProxy/src/est_bridge_safe.cpp")
 
 setting = "simu3"
 
@@ -137,7 +137,7 @@ for(rep in 1:rep_num) {
   PQB_noC_est_results[rep] <- PQB_noC_est
 
   IPQWo_est <- IPQW_oracle_estimator(nu = nu, dat = dat, time.name = "TT",
-                                     weights = weights)
+                                     para_set = para_set, weights = weights)
   IPQWo_est_results[rep] <- IPQWo_est
 
   # Naive estimator
@@ -205,7 +205,7 @@ for(rep in 1:rep_num) {
       boot_PQB_noC_est_results[b] <- PQB_noC_est
 
       IPQWo_est <- IPQW_oracle_estimator(nu = nu, dat = dat, time.name = "TT",
-                                         weights = weights)
+                                         para_set = para_set, weights = weights)
       boot_IPQWo_est_results[b] <- IPQWo_est
 
       # Naive estimator

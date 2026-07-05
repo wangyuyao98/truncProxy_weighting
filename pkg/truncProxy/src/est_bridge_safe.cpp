@@ -56,6 +56,7 @@ SEXP qbridge(NumericVector TT,
   int K_q = qtime.size();
   int dim_Z = Z.ncol();
   int dim_W = W.ncol();
+  int n_pinv_fail = 0;
 
   NumericVector B_numer(dim_W);
   NumericMatrix B(K_q + 1, dim_Z), dB(K_q, dim_Z), B_int(N, K_q + 1), dB_int(N, K_q);
@@ -96,6 +97,15 @@ SEXP qbridge(NumericVector TT,
 
     if (!pinv_success) {
       Rcpp::Rcerr << "Pseudo-inverse failed at time index j = " << j << "\n";
+      n_pinv_fail++;
+      // Carry the recursion forward so earlier time steps still start from the
+      // accumulated integral rather than from zero.
+      for (int i = 0; i < N; i++) {
+        B_int(i, j) = B_int(i, j + 1);
+      }
+      for (int dim_z = 0; dim_z < dim_Z; dim_z++) {
+        B(j, dim_z) = B(j + 1, dim_z);
+      }
       continue;
     }
 
@@ -129,7 +139,8 @@ SEXP qbridge(NumericVector TT,
     Named("dB_int") = dB_int,
     Named("B_numer") = B_numer,
     Named("B_denom") = B_denom,
-    Named("qtime") = qtime
+    Named("qtime") = qtime,
+    Named("n_pinv_fail") = n_pinv_fail
   );
 }
 
@@ -160,6 +171,7 @@ SEXP qbridge_IPCW(NumericVector TT,
   int K_q = qtime.size();
   int dim_Z = Z.ncol();
   int dim_W = W.ncol();
+  int n_pinv_fail = 0;
 
   NumericVector B_numer(dim_W);
   NumericMatrix B(K_q + 1, dim_Z), dB(K_q, dim_Z), B_int(N, K_q + 1), dB_int(N, K_q);
@@ -201,6 +213,15 @@ SEXP qbridge_IPCW(NumericVector TT,
 
     if (!pinv_success) {
       Rcpp::Rcerr << "Pseudo-inverse failed at time index j = " << j << "\n";
+      n_pinv_fail++;
+      // Carry the recursion forward so earlier time steps still start from the
+      // accumulated integral rather than from zero.
+      for (int i = 0; i < N; i++) {
+        B_int(i, j) = B_int(i, j + 1);
+      }
+      for (int dim_z = 0; dim_z < dim_Z; dim_z++) {
+        B(j, dim_z) = B(j + 1, dim_z);
+      }
       continue;
     }
 
@@ -234,6 +255,7 @@ SEXP qbridge_IPCW(NumericVector TT,
     Named("dB_int") = dB_int,
     Named("B_numer") = B_numer,
     Named("B_denom") = B_denom,
-    Named("qtime") = qtime
+    Named("qtime") = qtime,
+    Named("n_pinv_fail") = n_pinv_fail
   );
 }

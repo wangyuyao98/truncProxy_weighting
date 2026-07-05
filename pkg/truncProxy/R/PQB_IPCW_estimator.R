@@ -75,6 +75,9 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
       delta_t_mx[, j] <- as.numeric(dat[, event.name] == 1 | X > temp_time)
       IPCW_weights_mx[, j] <- delta_t_mx[, j] / pmax(stepfunD(pmin(X, temp_time) - Q), trim.IPCW)
     }
+    if (anyNA(IPCW_weights_mx)) {
+      stop("Time-varying IPCW weights contain NA values; check the censoring KM fit.")
+    }
 
     qfit <- qbridge_IPCW(
       TT = X,
@@ -85,6 +88,12 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
       IPCW_weights = IPCW_weights_mx,
       weights = weights
     )
+    if (qfit$n_pinv_fail > 0) {
+      warning(sprintf(
+        "qbridge_IPCW: pseudo-inverse failed at %d of %d time points; the corresponding increments were skipped.",
+        qfit$n_pinv_fail, length(qtime)
+      ))
+    }
     B_int <- qfit$B_int
     qtime <- qfit$qtime
 
@@ -95,6 +104,9 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
     tau_delta <- max(Q_max, t0)
     delta_t <- as.numeric(dat[, event.name] == 1 | X > tau_delta)
     IPCW_weights <- delta_t / pmax(stepfunD(pmin(X, tau_delta) - Q), trim.IPCW)
+    if (anyNA(IPCW_weights)) {
+      stop("IPCW weights contain NA values; check the censoring KM fit.")
+    }
     numer <- mean(weights * IPCW_weights * bT_hat * nu(X))
     denom <- mean(weights * IPCW_weights * bT_hat)
 
@@ -107,6 +119,9 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
     tau_delta <- max(Q_max, t0)
     delta_t <- as.numeric(dat[, event.name] == 1 | X > tau_delta)
     IPCW_weights <- delta_t / pmax(stepfunD(pmin(X, tau_delta) - Q), trim.IPCW)
+    if (anyNA(IPCW_weights)) {
+      stop("IPCW weights contain NA values; check the censoring KM fit.")
+    }
 
     est <- PQB_estimator(
       nu = nu,
