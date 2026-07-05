@@ -396,12 +396,10 @@ B_int_eval <- function(time.eval, B_int, qtime){
     stop("ncol(B_int) should equal to length(qtime) + 1, where the last column of B_int correspond to the time in the initial condition.")
   }
   
-  probs = rep(NA, length(time.eval))
-  for(i in 1:length(time.eval)){
-    id = findInterval(time.eval[i], c(0, qtime, Inf))
-    probs[i] = B_int[i,id]
-  }
-  
+  id = findInterval(time.eval, c(0, qtime, Inf))
+  id = pmin(pmax(id, 1), ncol(B_int))
+  probs = B_int[cbind(seq_along(time.eval), id)]
+
   return(probs)
 }
 
@@ -418,13 +416,11 @@ CDF_eval <- function(time.eval, CDF.mx){
   
   jumps = as.numeric(colnames(CDF.mx))
   CDF.mx = cbind(0, CDF.mx)
-  
-  probs = rep(NA, length(time.eval))
-  for(i in 1:length(time.eval)){
-    id = findInterval(time.eval[i], c(0, jumps, Inf))
-    probs[i] = CDF.mx[i,id]
-  }
-  
+
+  id = findInterval(time.eval, c(0, jumps, Inf))
+  id = pmin(pmax(id, 1), ncol(CDF.mx))
+  probs = CDF.mx[cbind(seq_along(time.eval), id)]
+
   return(probs)
 }
 
