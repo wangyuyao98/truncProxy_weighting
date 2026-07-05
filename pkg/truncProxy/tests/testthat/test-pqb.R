@@ -1,7 +1,7 @@
 expected_example_results <- c(
-  pqb = 0.46829407648884236,
-  pqb_ipcw_case = 0.50071856411755766,
-  pqb_ipcw_time_varying = 0.50802764944146661
+  pqb = 0.46829407648884291,
+  pqb_ipcw_case = 0.41083109830851139,
+  pqb_ipcw_time_varying = 0.46108075911803298
 )
 
 test_that("PQB_estimator matches a fixed regression target", {

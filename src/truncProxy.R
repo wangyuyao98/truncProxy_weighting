@@ -77,7 +77,7 @@ prep_IPCW <- function(dat, time.name, Q.name, event.name,
 
     IPCW_weights_mx = matrix(nrow = nrow(dat), ncol = length(qtime))
     delta_t_mx = matrix(nrow = nrow(dat), ncol = length(qtime))
-    for(j in 1:length(qtime)){
+    for(j in seq_along(qtime)){
       temp_time = qtime[j]
       delta_t_mx[,j] = as.numeric(dat[,event.name] == 1 | X > temp_time)
       IPCW_weights_mx[,j] = delta_t_mx[,j]/pmax(stepfunD(pmin(X,temp_time)-Q), trim.IPCW)
@@ -150,7 +150,7 @@ PQB_IPCW_estimator <- function(nu, t0, dat, time.name, Q.name, event.name = NULL
       # prepare the IPCW weights and the delta_t matrices
       IPCW_weights_mx = matrix(nrow = nrow(dat), ncol = length(qtime))
       delta_t_mx = matrix(nrow = nrow(dat), ncol = length(qtime))
-      for(j in 1:length(qtime)){
+      for(j in seq_along(qtime)){
         temp_time = qtime[j]
         delta_t_mx[,j] = as.numeric(dat[,event.name] == 1 | X > temp_time)
         IPCW_weights_mx[,j] = delta_t_mx[,j]/pmax(stepfunD(pmin(X,temp_time)-Q), trim.IPCW)
@@ -312,7 +312,7 @@ IPQW_IPCW_estimator_aalen <- function(nu, t0 = NULL, dat, time.name, Q.name, eve
       # prepare the IPCW weights and the delta_t matrices
       IPCW_weights_mx = matrix(nrow = nrow(dat), ncol = length(qtime))
       delta_t_mx = matrix(nrow = nrow(dat), ncol = length(qtime))
-      for(j in 1:length(qtime)){
+      for(j in seq_along(qtime)){
         temp_time = qtime[j]
         delta_t_mx[,j] = as.numeric(dat[,event.name] == 1 | TT > temp_time)
         IPCW_weights_mx[,j] = delta_t_mx[,j]/pmax(stepfunD(pmin(TT,temp_time)-Q), trim.IPCW)

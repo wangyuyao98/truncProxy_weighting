@@ -91,24 +91,11 @@ est_G <- function(dat.fit, dat.est = dat.fit, time.eval, model,
     
         
     }else if(model == "addhaz"){
-        
-        if(trunc){
-            formula.Q2 = formula(paste0(
-                "Surv(T2, Q2,", event.name, ") ~ ",
-                paste(paste0("const(", cov.names, ")"), collapse = " + ")
-            ))
-            
-        }else{
-            stop("This option has not been implemented.")
-        }
-        
-        if(is.null(weights)){
-            weights = rep(1, nrow(dat.fit))
-        }
-        
-        fit.Q2 = aalen(formula.Q2, data = dat.fit, weights = weights)
-        
-        
+
+        # The additive-hazards option was never completed: it fit timereg::aalen()
+        # but did not compute Gvz.mx, so it could not return a result.
+        stop("model = 'addhaz' is not implemented.")
+
     }else{
         stop("This Q model is not implemented in this function!")
     }

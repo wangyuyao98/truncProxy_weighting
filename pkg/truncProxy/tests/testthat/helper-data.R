@@ -34,7 +34,7 @@ make_example_data <- function(n = 120L, multi = 20L) {
   Q2 <- pmin(Q2, tau)
   Q <- tau - Q2
 
-  D <- rweibull(n, shape = para_set$shape_D, scale = para_set$scale_D)
+  D <- rweibull(multi * n, shape = para_set$shape_D, scale = para_set$scale_D)
   C <- Q + D
   X <- pmin(TT, C)
   delta <- as.integer(TT < C)

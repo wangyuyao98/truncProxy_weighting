@@ -11,7 +11,14 @@ out_file <- commandArgs(trailingOnly = TRUE)[1]
 source("src/data_generating.R")
 source("src/truncProxy.R")
 source("src/est_nuisance.R")
-Rcpp::sourceCpp("src/est_bridge_safe.cpp")
+# The v0.1.0-paper tag keeps the C++ under src/; later branches only have the
+# canonical package copy.
+cpp_file <- if (file.exists("src/est_bridge_safe.cpp")) {
+  "src/est_bridge_safe.cpp"
+} else {
+  "pkg/truncProxy/src/est_bridge_safe.cpp"
+}
+Rcpp::sourceCpp(cpp_file)
 
 para_set <- para_set_simu3
 t00 <- 1
@@ -29,6 +36,17 @@ w_boot <- w_boot / mean(w_boot)
 w_unif <- rep(1, N)
 
 ref <- list()
+
+# IPQW_oracle_estimator takes an explicit para_set argument on optimized
+# branches; the v0.1.0-paper version read the global instead.
+oracle <- function(weights) {
+  if ("para_set" %in% names(formals(IPQW_oracle_estimator))) {
+    IPQW_oracle_estimator(nu = nu, dat = dat, time.name = "TT",
+                          para_set = para_set, weights = weights)
+  } else {
+    IPQW_oracle_estimator(nu = nu, dat = dat, time.name = "TT", weights = weights)
+  }
+}
 
 for (wn in c("unif", "boot")) {
   weights <- if (wn == "unif") w_unif else w_boot
@@ -62,8 +80,7 @@ for (wn in c("unif", "boot")) {
     Z.name = c("Z", "U"), weights = weights,
     IPCW_time_varying = TRUE, trim.IPCW = trim.IPCW)
 
-  ref[[paste0("IPQWo_", wn)]] <- IPQW_oracle_estimator(
-    nu = nu, dat = dat, time.name = "TT", weights = weights)
+  ref[[paste0("IPQWo_", wn)]] <- oracle(weights)
 }
 
 ## Raw bridge outputs (bootstrap weights, same inputs PQB_estimator builds)

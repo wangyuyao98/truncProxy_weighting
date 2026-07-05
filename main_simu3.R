@@ -193,8 +193,14 @@ work_units <- do.call(c, lapply(seq_len(rep_num), function(r) {
 chunk_results <- mclapply(work_units, run_boot_chunk, mc.cores = n_cores)
 failed <- vapply(chunk_results, function(r) inherits(r, "try-error") || !is.numeric(r), logical(1))
 if (any(failed)) {
-  stop("Bootstrap chunk(s) failed:\n",
-       paste(unlist(chunk_results[failed]), collapse = "\n"))
+  bad <- which(failed)
+  bad_desc <- vapply(bad, function(i) {
+    sprintf("rep %d, bootstrap %s (%s)",
+            work_units[[i]]$rep,
+            paste(range(work_units[[i]]$b_idx), collapse = "-"),
+            paste(as.character(chunk_results[[i]]), collapse = " "))
+  }, character(1))
+  stop("Bootstrap chunk(s) failed:\n", paste(bad_desc, collapse = "\n"))
 }
 
 end_time <- Sys.time()

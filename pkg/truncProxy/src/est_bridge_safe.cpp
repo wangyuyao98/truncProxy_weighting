@@ -24,9 +24,9 @@ arma::mat safe_pinv(const arma::mat& X, double tol, bool& success) {
       return pinv_X;
     }
 
-    // Same convention as arma::pinv(X, tol): treat singular values > tol as
-    // nonzero and drop the rest.
-    const arma::uvec keep = arma::find(s > tol);
+    // Same convention as arma::pinv(X, tol): singular values less than tol
+    // are treated as zero.
+    const arma::uvec keep = arma::find(s >= tol);
     if (keep.n_elem < std::min(X.n_rows, X.n_cols)) {
       Rcpp::Rcerr << "Warning: Matrix is rank-deficient, pseudo-inverse may be unstable.\n";
     }
