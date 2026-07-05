@@ -73,14 +73,14 @@ data_gen <- function(N, para_set, multi = 20) {
   Q = tau - Q2
   
   if(is.null(para_set$scale_D)){
-    D = rep(Inf, N)
+    D = rep(Inf, multi*N)
   }else{
     if(is.null(para_set$shape_D)){
       para_set$shape_D = 1
     }
-    
-    D = rweibull(N, shape = para_set$shape_D, scale = para_set$scale_D)
-    # D = rexp(N, rate = para_set$rate_D)
+
+    D = rweibull(multi*N, shape = para_set$shape_D, scale = para_set$scale_D)
+    # D = rexp(multi*N, rate = para_set$rate_D)
   }
   
   C = Q + D
@@ -107,23 +107,23 @@ data_gen <- function(N, para_set, multi = 20) {
 
 # The function for computing the true nuisance parameters
 # return a vector of G(time.eval[i]|Z_i,U_i)
-G_truth <- function(Z, U, time.eval){
-  
+G_truth <- function(Z, U, time.eval, para_set){
+
   if(length(Z) != length(time.eval) | length(U) != length(time.eval)){
     stop("The length of Z, U, time.eval do not match. ")
   }
-  
+
   lambda =  cbind(1, Z, U) %*% para_set$mu_Q
   Gtz.vec = pexp(para_set$Q.max - time.eval, lambda, lower = F)
-  
+
   return(Gtz.vec)
 }
 
-Sd_truth <- function(time.eval){
-  
+Sd_truth <- function(time.eval, para_set){
+
   Sd.vec = pweibull(time.eval, shape = para_set$shape_D, scale = para_set$scale_D, lower = F)
   # Sd.vec = pexp(time.eval, rate = para_set$rate_D, lower = F)
-  
+
   return(Sd.vec)
 }
 

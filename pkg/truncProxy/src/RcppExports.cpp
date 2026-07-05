@@ -12,35 +12,35 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // qbridge
-SEXP qbridge(NumericVector TT, NumericVector Q, NumericVector qtime, NumericMatrix Z, NumericMatrix W, NumericVector weights, double tol);
+SEXP qbridge(const arma::vec& TT, const arma::vec& Q, const arma::vec& qtime, const arma::mat& Z, const arma::mat& W, const arma::vec& weights, double tol);
 RcppExport SEXP _truncProxy_qbridge(SEXP TTSEXP, SEXP QSEXP, SEXP qtimeSEXP, SEXP ZSEXP, SEXP WSEXP, SEXP weightsSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type TT(TTSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Q(QSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type qtime(qtimeSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type W(WSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type TT(TTSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type Q(QSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type qtime(qtimeSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     rcpp_result_gen = Rcpp::wrap(qbridge(TT, Q, qtime, Z, W, weights, tol));
     return rcpp_result_gen;
 END_RCPP
 }
 // qbridge_IPCW
-SEXP qbridge_IPCW(NumericVector TT, NumericVector Q, NumericVector qtime, NumericMatrix Z, NumericMatrix W, NumericMatrix IPCW_weights, NumericVector weights, double tol);
+SEXP qbridge_IPCW(const arma::vec& TT, const arma::vec& Q, const arma::vec& qtime, const arma::mat& Z, const arma::mat& W, const arma::mat& IPCW_weights, const arma::vec& weights, double tol);
 RcppExport SEXP _truncProxy_qbridge_IPCW(SEXP TTSEXP, SEXP QSEXP, SEXP qtimeSEXP, SEXP ZSEXP, SEXP WSEXP, SEXP IPCW_weightsSEXP, SEXP weightsSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type TT(TTSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Q(QSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type qtime(qtimeSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type W(WSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type IPCW_weights(IPCW_weightsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type TT(TTSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type Q(QSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type qtime(qtimeSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type IPCW_weights(IPCW_weightsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     rcpp_result_gen = Rcpp::wrap(qbridge_IPCW(TT, Q, qtime, Z, W, IPCW_weights, weights, tol));
     return rcpp_result_gen;

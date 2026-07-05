@@ -33,6 +33,12 @@ PQB_estimator <- function(nu, dat, time.name, Q.name, W1.name, W2.name, Z.name,
   qtime <- v[qtime.id]
 
   qfit <- qbridge(TT = TT, Q = Q, qtime = qtime, Z = q_Z, W = q_W, weights = weights)
+  if (qfit$n_pinv_fail > 0) {
+    warning(sprintf(
+      "qbridge: pseudo-inverse failed at %d of %d time points; the corresponding increments were skipped.",
+      qfit$n_pinv_fail, length(qtime)
+    ))
+  }
   B_int <- qfit$B_int
   qtime <- qfit$qtime
 

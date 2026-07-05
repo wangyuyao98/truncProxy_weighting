@@ -13,9 +13,16 @@ Associated paper:
 ## Repository structure
 
 - `pkg/truncProxy/`: R package source for `truncProxy`
-- `src/`: original research implementation of the estimators
+- `src/`: research implementation of the estimators
 - `main_simu3.R`: main simulation script
 - `results/`: saved outputs from experiments and simulations
+- `dev/`: scripts for verifying that optimized implementations reproduce the
+  original results (see `dev/README.md`)
+
+The implementation used for the paper is preserved at the `v0.1.0-paper` git
+tag; later commits contain performance improvements and bug fixes that
+reproduce the same results (verified to numerical tolerance by the scripts in
+`dev/`).
 
 ## R package
 
@@ -34,10 +41,11 @@ devtools::install("pkg/truncProxy")
 
 ## Research code
 
-The `src/` directory contains the original implementation used for method
-development and simulation studies. The package in `pkg/truncProxy/` is the
-user-facing distribution of the current `PQB_estimator()` and
-`PQB_IPCW_estimator()` implementations.
+The `src/` directory contains the implementation used for method development
+and simulation studies. The package in `pkg/truncProxy/` is the user-facing
+distribution of the current `PQB_estimator()` and `PQB_IPCW_estimator()`
+implementations, and also provides the compiled bridge-process routines used
+by the research code.
 
 ## Reproducing simulations
 

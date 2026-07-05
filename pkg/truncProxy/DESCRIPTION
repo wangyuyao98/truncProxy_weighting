@@ -1,7 +1,7 @@
 Package: truncProxy
 Type: Package
 Title: Proximal Weighting Estimation for Dependent Left Truncation
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Yuyao", "Wang", email = "yuw079@ucsd.edu", role = c("aut", "cre")),
     person("Andrew", "Ying", role = "aut"),

@@ -53,3 +53,6 @@ rsconnect/
 pkg/truncProxy/src/*.o
 pkg/truncProxy/src/*.so
 pkg/truncProxy/src/*.dll
+
+# macOS Finder metadata
+.DS_Store

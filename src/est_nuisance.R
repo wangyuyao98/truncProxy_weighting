@@ -91,24 +91,11 @@ est_G <- function(dat.fit, dat.est = dat.fit, time.eval, model,
     
         
     }else if(model == "addhaz"){
-        
-        if(trunc){
-            formula.Q2 = formula(paste0(
-                "Surv(T2, Q2,", event.name, ") ~ ",
-                paste(paste0("const(", cov.names, ")"), collapse = " + ")
-            ))
-            
-        }else{
-            stop("This option has not been implemented.")
-        }
-        
-        if(is.null(weights)){
-            weights = rep(1, nrow(dat.fit))
-        }
-        
-        fit.Q2 = aalen(formula.Q2, data = dat.fit, weights = weights)
-        
-        
+
+        # The additive-hazards option was never completed: it fit timereg::aalen()
+        # but did not compute Gvz.mx, so it could not return a result.
+        stop("model = 'addhaz' is not implemented.")
+
     }else{
         stop("This Q model is not implemented in this function!")
     }
@@ -131,80 +118,46 @@ est_G <- function(dat.fit, dat.est = dat.fit, time.eval, model,
 
 ### Functions needed when using Cox models ---------------------------------------
 # function for computing the baseline CDF or survival function
-baseCDF.single <- function(t, basehaz){
-    if(t<min(basehaz[,'time'])){
-        return(0)   # check 1 or 0
-    }else{
-        id = which((t - basehaz[,'time'])>=0)
-        index = which.min((t - basehaz[,'time'])[id])
-        
-        return(1-exp(-basehaz[index,'hazard']))
-    }
-}
-
+# basehaz (from survival::basehaz) is sorted by time, so a single
+# findInterval() call replaces the per-element which()/which.min() scan.
 baseCDF <- function(t, basehaz){
-    cdf = sapply(t, baseCDF.single, basehaz = basehaz)
+    id = findInterval(t, basehaz[,'time'])
+    cdf = c(0, 1-exp(-basehaz[,'hazard']))[id + 1]
     return(cdf)
 }
 
-baseS.single <- function(t, basehaz){
-    if(t<min(basehaz[,'time'])){
-        return(1)   # check 1 or 0
-    }else{
-        id = which((t - basehaz[,'time'])>=0)
-        index = which.min((t - basehaz[,'time'])[id])
-        
-        return(exp(-basehaz[index,'hazard']))
-    }
-}
-
 baseS <- function(t, basehaz){
-    S = sapply(t, baseS.single, basehaz = basehaz)
+    id = findInterval(t, basehaz[,'time'])
+    S = c(1, exp(-basehaz[,'hazard']))[id + 1]
     return(S)
 }
 
 
 ## function for computing G(t|z)
+# baseS() returns 1 for times before the first baseline-hazard jump, so
+# S0^expo = 1 there and no special case is needed.
 Gz <- function(t, Z, basehaz.Q2, beta.Q2, tau){
-    if(is.matrix(Z)){
-        result = matrix(nrow = nrow(Z), ncol = length(t))
-        for(j in 1:length(t)){
-            if(tau-t[j]<min(basehaz.Q2$time)){
-                result[,j] = 1
-            }else{
-                result[,j] = (baseS(tau-t[j], basehaz.Q2))^exp(Z %*% beta.Q2)
-            }
-        }
-    }else{
-        result = matrix(nrow = 1, ncol = length(t))
-        for(j in 1:length(t)){
-            if(tau-t[j]<min(basehaz.Q2$time)){
-                result[,j] = 1
-            }else{
-                result[,j] = (baseS(tau-t[j], basehaz.Q2))^exp(sum(Z*beta.Q2))
-            }
-        }
+    if(!is.matrix(Z)){
+        Z = matrix(Z, nrow = 1)
     }
+    S0 = baseS(tau - t, basehaz.Q2)            # length(t)
+    expo = as.vector(exp(Z %*% beta.Q2))       # one per subject
+    result = t(outer(S0, expo, `^`))           # nrow(Z) x length(t)
     colnames(result) = t
-    
+
     return(result)
 }
 
 ## function for computing F(t|z)
 Fz <- function(t, Z, basehaz.T, beta.T){
-    if(is.matrix(Z)){
-        result = matrix(nrow = nrow(Z), ncol = length(t))
-        for(j in 1:length(t)){
-            result[,j] = 1-(baseS(t[j], basehaz.T))^exp(Z %*% beta.T)
-        }
-    }else{
-        result = matrix(nrow = 1, ncol = length(t))
-        for(j in 1:length(t)){
-            result[,j] = 1-(baseS(t[j], basehaz.T))^exp(sum(Z*beta.T))
-        }
+    if(!is.matrix(Z)){
+        Z = matrix(Z, nrow = 1)
     }
+    S0 = baseS(t, basehaz.T)
+    expo = as.vector(exp(Z %*% beta.T))
+    result = 1 - t(outer(S0, expo, `^`))
     colnames(result) = t
-    
+
     return(result)
 }
 

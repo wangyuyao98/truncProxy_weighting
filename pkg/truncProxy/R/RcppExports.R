@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 qbridge <- function(TT, Q, qtime, Z, W, weights, tol = 0.001) {
-    .Call('_truncProxy_qbridge', PACKAGE = 'truncProxy', TT, Q, qtime, Z, W, weights, tol)
+    .Call(`_truncProxy_qbridge`, TT, Q, qtime, Z, W, weights, tol)
 }
 
 qbridge_IPCW <- function(TT, Q, qtime, Z, W, IPCW_weights, weights, tol = 0.001) {
-    .Call('_truncProxy_qbridge_IPCW', PACKAGE = 'truncProxy', TT, Q, qtime, Z, W, IPCW_weights, weights, tol)
+    .Call(`_truncProxy_qbridge_IPCW`, TT, Q, qtime, Z, W, IPCW_weights, weights, tol)
 }
 
