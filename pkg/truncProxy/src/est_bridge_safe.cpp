@@ -6,20 +6,29 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // Pseudo-inverse from a single SVD; the same decomposition supplies the
-// rank-deficiency warning, so the matrix is factorized only once.
-arma::mat safe_pinv(const arma::mat& X, double tol, bool& success) {
+// rank-deficiency count, so the matrix is factorized only once. Mirrors
+// arma::pinv's driver strategy: try the fast divide-and-conquer SVD (dgesdd)
+// first and fall back to the robust standard driver (dgesvd) when it fails
+// to converge -- dgesdd alone fails routinely on the rank-deficient designs
+// that binary covariates produce. rank_deficient is incremented (not reset)
+// so callers can accumulate a per-recursion count; messages are the caller's
+// responsibility to keep per-step output from flooding the console.
+arma::mat safe_pinv(const arma::mat& X, double tol, bool& success,
+                    int& rank_deficient) {
   arma::mat pinv_X;
   try {
-    if (X.n_rows == 0 || X.n_cols == 0) {
+    if (X.n_rows == 0 || X.n_cols == 0 || X.has_nonfinite()) {
       success = false;
-      Rcpp::Rcerr << "Matrix is empty, skipping pseudo-inverse.\n";
       return pinv_X;
     }
 
     arma::mat U, V;
     arma::vec s;
-    if (!arma::svd_econ(U, s, V, X)) {
-      Rcpp::Rcerr << "SVD failed in pseudo-inverse calculation.\n";
+    bool ok = arma::svd_econ(U, s, V, X, "both", "dc");
+    if (!ok) {
+      ok = arma::svd_econ(U, s, V, X, "both", "std");
+    }
+    if (!ok) {
       success = false;
       return pinv_X;
     }
@@ -28,7 +37,7 @@ arma::mat safe_pinv(const arma::mat& X, double tol, bool& success) {
     // are treated as zero.
     const arma::uvec keep = arma::find(s >= tol);
     if (keep.n_elem < std::min(X.n_rows, X.n_cols)) {
-      Rcpp::Rcerr << "Warning: Matrix is rank-deficient, pseudo-inverse may be unstable.\n";
+      rank_deficient++;
     }
 
     if (keep.n_elem == 0) {
@@ -62,6 +71,7 @@ static List qbridge_core(const arma::vec& TT,
   const arma::uword dim_Z = Z.n_cols;
   const bool use_ipcw = (IPCW_weights.n_elem > 0);
   int n_pinv_fail = 0;
+  int n_rank_deficient = 0;
 
   // Counting-process increments and at-risk indicators; neither depends on
   // the recursion, so both are computed in one vectorized pass.
@@ -94,10 +104,9 @@ static List qbridge_core(const arma::vec& TT,
     B_denom = W.t() * Zv;
 
     bool pinv_success = false;
-    arma::mat pinv_B_denom = safe_pinv(B_denom, tol, pinv_success);
+    arma::mat pinv_B_denom = safe_pinv(B_denom, tol, pinv_success, n_rank_deficient);
 
     if (!pinv_success) {
-      Rcpp::Rcerr << "Pseudo-inverse failed at time index j = " << j << "\n";
       n_pinv_fail++;
       // Carry the recursion forward so earlier time steps still start from
       // the accumulated integral rather than from zero.
@@ -113,6 +122,13 @@ static List qbridge_core(const arma::vec& TT,
     B.row(j) = B.row(j + 1) - dB_j.t();
   }
 
+  // One summary line instead of a message per time step; the counts are also
+  // returned so R callers can warn programmatically.
+  if (n_pinv_fail > 0) {
+    Rcpp::Rcerr << "qbridge: pseudo-inverse failed at " << n_pinv_fail << " of "
+                << K_q << " time steps (increment skipped, integral carried forward).\n";
+  }
+
   return List::create(
     Named("dN") = dN,
     Named("risk_q") = risk_q,
@@ -123,7 +139,8 @@ static List qbridge_core(const arma::vec& TT,
     Named("B_numer") = B_numer,
     Named("B_denom") = B_denom,
     Named("qtime") = qtime,
-    Named("n_pinv_fail") = n_pinv_fail
+    Named("n_pinv_fail") = n_pinv_fail,
+    Named("n_rank_deficient") = n_rank_deficient
   );
 }
 
