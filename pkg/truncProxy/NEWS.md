@@ -1,5 +1,11 @@
 # truncProxy 0.2.0
 
+- `safe_pinv()` now falls back to the robust standard SVD driver (dgesvd)
+  when the fast divide-and-conquer driver fails to converge, matching
+  `arma::pinv`'s strategy — divide-and-conquer alone fails routinely on the
+  rank-deficient designs produced by binary covariates. Per-time-step
+  console messages were replaced by a single end-of-call summary, and the
+  rank-deficiency count is returned as `n_rank_deficient`.
 - Vectorized the compiled bridge-process recursion with Armadillo matrix
   operations; roughly 1.5x faster per call, with results identical up to
   floating-point summation order.
