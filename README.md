@@ -47,11 +47,33 @@ distribution of the current `PQB_estimator()` and `PQB_IPCW_estimator()`
 implementations, and also provides the compiled bridge-process routines used
 by the research code.
 
-## Reproducing simulations
+## Reproducing the simulation study (Table 1)
 
-The main simulation workflow is in:
+Table 1 of the paper uses the `simu3` setting of `main_simu3.R`. Dependencies:
 
-- `main_simu3.R`
+```r
+install.packages(c("Rcpp", "RcppArmadillo", "survival"))
+```
 
-Before running the simulation code, set the working directory to the repository
-root and make sure the required R package dependencies are installed.
+Run from the repository root:
+
+```bash
+Rscript main_simu3.R
+```
+
+Settings, as in the paper: `N = 1000` subjects per replicate, 500 simulation
+replicates, `B = 200` bootstrap draws per replicate, seed 213. Each replicate
+re-seeds its own random-number stream, so the results are identical for any
+number of worker cores (`n_cores`, set near the top of the script). The full run
+takes roughly 30-60 minutes on a modern laptop; for a quick smoke test use
+`SIMU_REPS=5 Rscript main_simu3.R`. The true value of the estimand is read from
+`results/simu3_truth.rda` (the commented block in the script shows how it was
+computed).
+
+Provenance: the exact numbers in the published Table 1 were produced with the
+code at the `v0.1.0-paper` tag (`git checkout v0.1.0-paper`). Later commits fix
+a bug in the data generator (censoring times were recycled across simulated
+subjects), so re-running on `main` draws different simulated data for the same
+seed. The estimators themselves are unchanged: `dev/check_equivalence.R`
+verifies that the current implementation reproduces the tagged one on fixed data
+to numerical tolerance.

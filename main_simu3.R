@@ -66,7 +66,10 @@ trim.IPCW = 0.05
 IPCW_time_varying = TRUE   # Whether to use time-varying IPCW weights or case weights --  TRUE: time varying weights, FALSE: case weights
 
 N <- 1000
-rep_num <- 5 # number of simulation runs
+# Settings used for Table 1 of the paper: 500 simulation replicates, B = 200.
+# SIMU_REPS overrides the replicate count for a quick smoke test, e.g.
+#   SIMU_REPS=5 Rscript main_simu3.R
+rep_num <- as.integer(Sys.getenv("SIMU_REPS", "500")) # number of simulation runs
 B <- 200 # number of bootstrap
 
 # Number of worker processes. Set this to control CPU usage; the results are
