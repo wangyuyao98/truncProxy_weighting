@@ -1,0 +1,27 @@
+\begin{table}[ht]
+\centering
+\caption{Simulation results for different estimators under the case with right censoring. Each observed data set has sample size 500 or 1000, and 500 data sets are simulated for each sample size.}
+\label{tab:simu2_cens}
+\begin{tabular}{lrcccrccc}
+  \toprule
+  & \multicolumn{4}{c}{$n = 500$} & \multicolumn{4}{c}{$n = 1000$} \\
+  \cmidrule(lr){2-5} \cmidrule(lr){6-9}
+  Method & Bias & SD & bootSE & CP & Bias & SD & bootSE & CP \\
+  \midrule
+  PQB & -0.0120 & 0.0693 & 0.0602 & 0.926 & -0.0065 & 0.0398 & 0.0396 & 0.952 \\
+  IPQW & 0.0157 & 0.0429 & 0.0389 & 0.890 & 0.0170 & 0.0284 & 0.0279 & 0.876 \\
+  % IPQW2 & 0.0214 & 0.0414 & 0.0378 & 0.872 & 0.0217 & 0.0274 & 0.0272 & 0.858 \\
+  PQB-cw & -0.0229 & 0.0876 & 0.0709 & 0.920 & -0.0119 & 0.0531 & 0.0471 & 0.944 \\
+  IPQW-cw & 0.0096 & 0.0504 & 0.0432 & 0.898 & 0.0141 & 0.0321 & 0.0308 & 0.894 \\
+  % IPQW2-cw & 0.0168 & 0.0476 & 0.0418 & 0.884 & 0.0194 & 0.0309 & 0.0300 & 0.862 \\
+  PL & 0.0706 & 0.0312 & 0.0292 & 0.336 & 0.0708 & 0.0209 & 0.0208 & 0.076 \\
+  KM & 0.2630 & 0.0219 & 0.0203 & 0.000 & 0.2631 & 0.0144 & 0.0144 & 0.000 \\
+  naive & 0.1893 & 0.0222 & 0.0212 & 0.000 & 0.1890 & 0.0153 & 0.0150 & 0.000 \\
+  \midrule
+  IPQW-U & -0.0036 & 0.0485 & 0.0423 & 0.924 & -0.0024 & 0.0324 & 0.0306 & 0.940 \\
+  IPQW-U-cw & -0.0092 & 0.0557 & 0.0467 & 0.916 & -0.0054 & 0.0365 & 0.0340 & 0.932 \\
+  % PQB-noC & -0.0063 & 0.0588 & 0.0562 & 0.928 & -0.0055 & 0.0373 & 0.0372 & 0.956 \\
+  IPQW-o & 0.0025 & 0.0339 & 0.0305 & 0.938 & 0.0001 & 0.0226 & 0.0218 & 0.940 \\
+  \bottomrule
+\end{tabular}
+\end{table}

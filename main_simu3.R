@@ -63,12 +63,14 @@ Z.name = "Z"
 U.name = "U"
 
 trim.IPCW = 0.05
-IPCW_time_varying = TRUE   # Whether to use time-varying IPCW weights or case weights --  TRUE: time varying weights, FALSE: case weights
+# Whether to use time-varying IPCW weights (TRUE; the paper's main rows) or
+# case weights (FALSE; the "-cw" rows of Table 1). Override: SIMU_TV=FALSE
+IPCW_time_varying = as.logical(Sys.getenv("SIMU_TV", "TRUE"))
 
-N <- 1000
-# Settings used for Table 1 of the paper: 500 simulation replicates, B = 200.
-# SIMU_REPS overrides the replicate count for a quick smoke test, e.g.
-#   SIMU_REPS=5 Rscript main_simu3.R
+# Table 1 of the paper reports n = 500 and n = 1000 (override: SIMU_N=500),
+# 500 simulation replicates, B = 200. SIMU_REPS overrides the replicate count
+# for a quick smoke test, e.g.  SIMU_REPS=5 Rscript main_simu3.R
+N <- as.integer(Sys.getenv("SIMU_N", "1000"))
 rep_num <- as.integer(Sys.getenv("SIMU_REPS", "500")) # number of simulation runs
 B <- 200 # number of bootstrap
 
@@ -234,7 +236,15 @@ summary_df <- data.frame(
 print(summary_df, digits = 3)
 
 
-# save the results
-# save(est_results, bootSE_results, cover_results, summary_df, truth,
-#      N, B, rep_num, seeds, IPCW_time_varying, t00, trim.IPCW,
-#      file = paste0("results/", setting, "_n", N, "_B", B, "_tv", IPCW_time_varying, "_t0_", t00, ".rda"))
+# Save the results when SIMU_OUT gives a file prefix, e.g.
+#   SIMU_N=500 SIMU_OUT=results/simu3_table1_n500_tvTRUE Rscript main_simu3.R
+# writes <prefix>.csv (the summary table) and <prefix>.rda (all matrices and
+# settings). dev/make_table1.R assembles the paper's Table 1 from these files.
+out_prefix <- Sys.getenv("SIMU_OUT", "")
+if (nzchar(out_prefix)) {
+  write.csv(summary_df, paste0(out_prefix, ".csv"), row.names = FALSE)
+  save(est_results, bootSE_results, cover_results, summary_df, truth,
+       N, B, rep_num, seeds, IPCW_time_varying, t00, trim.IPCW,
+       file = paste0(out_prefix, ".rda"))
+  cat(sprintf("saved %s.{csv,rda}\n", out_prefix))
+}

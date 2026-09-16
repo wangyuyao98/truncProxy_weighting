@@ -1,3 +1,4 @@
+<!-- Notes for the 0.1.0 CRAN submission; to be refreshed before the next submission. -->
 ## Test environments
 
 - Local macOS (Apple Silicon), R 4.5.1

@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the associated paper."
+title: "truncProxy_weighting: proximal weighting estimation under dependent left truncation"
+type: software
+authors:
+  - family-names: Wang
+    given-names: Yuyao
+  - family-names: Ying
+    given-names: Andrew
+  - family-names: Xu
+    given-names: Ronghui
+repository-code: "https://github.com/wangyuyao98/truncProxy_weighting"
+license: GPL-3.0
+preferred-citation:
+  type: article
+  title: "Proximal Survival Analysis for Dependent Left Truncation"
+  authors:
+    - family-names: Wang
+      given-names: Yuyao
+    - family-names: Ying
+      given-names: Andrew
+    - family-names: Xu
+      given-names: Ronghui
+  year: 2025
+  url: "https://arxiv.org/abs/2512.21283"
+  identifiers:
+    - type: other
+      value: "arXiv:2512.21283"
+      description: "arXiv preprint"
