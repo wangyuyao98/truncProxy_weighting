@@ -1,0 +1,20 @@
+[1] 0.4708192
+[1] 0.3705476
+[1] 0.1960867
+qbridge: pseudo-inverse failed at 35 of 545 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 238 of 560 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 136 of 544 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 137 of 535 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 236 of 549 time steps (increment skipped, integral carried forward).
+Time difference of 1.592394 hours
+         method      bias  empSE bootSE coverage
+PQB         PQB -0.011875 0.0531 0.0471    0.944
+IPQW       IPQW  0.014085 0.0321 0.0308    0.894
+IPQW2     IPQW2  0.019393 0.0309 0.0300    0.862
+IPQWu     IPQWu -0.005360 0.0365 0.0340    0.932
+PQB_noC PQB_noC -0.005528 0.0373 0.0372    0.956
+IPQWo     IPQWo  0.000103 0.0226 0.0218    0.940
+naive     naive  0.189007 0.0153 0.0150    0.000
+PL           PL  0.070767 0.0209 0.0208    0.076
+KM           KM  0.263140 0.0144 0.0144    0.000
+saved results/simu3_table1_n1000_tvFALSE.{csv,rda}

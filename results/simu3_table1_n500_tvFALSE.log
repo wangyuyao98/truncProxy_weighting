@@ -1,0 +1,43 @@
+[1] 0.4708192
+[1] 0.3705476
+[1] 0.1960867
+qbridge: pseudo-inverse failed at 2 of 285 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 55 of 264 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 46 of 259 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 5 of 286 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 115 of 263 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 51 of 263 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 1 of 255 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 6 of 271 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 61 of 271 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 128 of 271 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 173 of 294 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 80 of 294 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 37 of 294 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 66 of 253 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 42 of 256 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 9 of 266 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 30 of 266 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 4 of 289 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 37 of 263 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 60 of 263 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 60 of 263 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 2 of 273 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 45 of 273 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 60 of 265 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 25 of 265 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 47 of 278 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 30 of 283 time steps (increment skipped, integral carried forward).
+qbridge: pseudo-inverse failed at 65 of 260 time steps (increment skipped, integral carried forward).
+Time difference of 12.14445 mins
+         method     bias  empSE bootSE coverage
+PQB         PQB -0.02292 0.0876 0.0709    0.920
+IPQW       IPQW  0.00957 0.0504 0.0432    0.898
+IPQW2     IPQW2  0.01682 0.0476 0.0418    0.884
+IPQWu     IPQWu -0.00919 0.0557 0.0467    0.916
+PQB_noC PQB_noC -0.00631 0.0588 0.0562    0.928
+IPQWo     IPQWo  0.00253 0.0339 0.0305    0.938
+naive     naive  0.18931 0.0222 0.0212    0.000
+PL           PL  0.07058 0.0312 0.0292    0.336
+KM           KM  0.26295 0.0219 0.0203    0.000
+saved results/simu3_table1_n500_tvFALSE.{csv,rda}
